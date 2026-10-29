@@ -1,0 +1,72 @@
+{
+    "$schema": "https://apify.com/schemas/v1/dataset.ide.json",
+    "actorSpecification": 1,
+    "fields": {
+        "type": "object",
+        "properties": {
+            "provider": { "type": "string", "description": "vast.ai or runpod." },
+            "priceType": { "type": "string", "description": "marketplace, on-demand or spot." },
+            "gpuModel": { "type": ["string", "null"] },
+            "numGpus": { "type": ["integer", "null"] },
+            "vramGbPerGpu": { "type": ["integer", "null"] },
+            "pricePerHourUsd": { "type": ["number", "null"], "description": "Total hourly price of the offer." },
+            "pricePerGpuHourUsd": { "type": ["number", "null"], "description": "Hourly price divided by GPU count — the number to compare across offers." },
+            "cpuRamGb": { "type": ["integer", "null"] },
+            "cpuCores": { "type": ["integer", "null"] },
+            "diskSpaceGb": { "type": ["number", "null"] },
+            "internetDownMbps": { "type": ["number", "null"] },
+            "internetUpMbps": { "type": ["number", "null"] },
+            "reliability": { "type": ["number", "null"], "description": "Vast.ai host reliability, 0 to 1." },
+            "verification": { "type": ["string", "null"] },
+            "location": { "type": ["string", "null"] },
+            "cudaVersion": { "type": ["string", "null"] },
+            "dlPerf": { "type": ["number", "null"], "description": "Vast.ai deep-learning performance score." },
+            "dlPerfPerDollar": { "type": ["number", "null"], "description": "Performance per dollar — higher is better value." },
+            "isRentable": { "type": ["boolean", "null"] },
+            "offerId": { "type": ["integer", "null"] },
+            "machineId": { "type": ["integer", "null"] },
+            "url": { "type": ["string", "null"] },
+            "scrapedAt": { "type": ["string", "null"] }
+        },
+        "required": ["provider", "priceType"]
+    },
+    "views": {
+        "overview": {
+            "title": "Cheapest first",
+            "transformation": {
+                "fields": ["gpuModel", "pricePerGpuHourUsd", "provider", "priceType", "numGpus", "vramGbPerGpu", "location", "reliability", "url"]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "gpuModel": { "label": "GPU", "format": "text" },
+                    "pricePerGpuHourUsd": { "label": "$/GPU/hr", "format": "number" },
+                    "provider": { "label": "Provider", "format": "text" },
+                    "priceType": { "label": "Type", "format": "text" },
+                    "numGpus": { "label": "GPUs", "format": "number" },
+                    "vramGbPerGpu": { "label": "VRAM GB", "format": "number" },
+                    "location": { "label": "Location", "format": "text" },
+                    "reliability": { "label": "Reliability", "format": "number" },
+                    "url": { "label": "Link", "format": "link" }
+                }
+            }
+        },
+        "value": {
+            "title": "Best value (perf per $)",
+            "transformation": {
+                "fields": ["gpuModel", "dlPerfPerDollar", "dlPerf", "pricePerGpuHourUsd", "provider", "location"]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "gpuModel": { "label": "GPU", "format": "text" },
+                    "dlPerfPerDollar": { "label": "Perf / $", "format": "number" },
+                    "dlPerf": { "label": "Perf score", "format": "number" },
+                    "pricePerGpuHourUsd": { "label": "$/GPU/hr", "format": "number" },
+                    "provider": { "label": "Provider", "format": "text" },
+                    "location": { "label": "Location", "format": "text" }
+                }
+            }
+        }
+    }
+}

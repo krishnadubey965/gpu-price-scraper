@@ -1,0 +1,51 @@
+{
+    "$schema": "https://apify.com/schemas/v1/input.ide.json",
+    "title": "GPU Price Scraper",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "sources": {
+            "title": "Providers",
+            "type": "array",
+            "description": "Which GPU providers to collect prices from.",
+            "editor": "select",
+            "items": { "type": "string", "enum": ["vast.ai", "runpod"], "enumTitles": ["Vast.ai", "RunPod"] },
+            "default": ["vast.ai", "runpod"]
+        },
+        "gpuModels": {
+            "title": "GPU models",
+            "type": "array",
+            "description": "Model names exactly as the provider spells them, for example 'RTX 4090' or 'H100 SXM'. Leave empty to discover whatever is on the market right now.",
+            "editor": "stringList",
+            "prefill": ["RTX 4090", "H100 SXM"]
+        },
+        "onlyCheapestPerModel": {
+            "title": "Only the cheapest offer per model",
+            "type": "boolean",
+            "description": "Keep one row per provider, GPU model and price type — the cheapest one. Turn this on for a price index, off to see the whole market.",
+            "default": false
+        },
+        "maxPricePerHourUsd": {
+            "title": "Max price per hour (USD)",
+            "type": "integer",
+            "description": "Drop offers above this hourly price. Leave empty for no limit.",
+            "minimum": 0,
+            "unit": "USD/hour"
+        },
+        "minVramGb": {
+            "title": "Minimum VRAM per GPU (GB)",
+            "type": "integer",
+            "description": "Drop offers whose GPUs have less memory than this. Leave empty for no limit.",
+            "minimum": 0,
+            "unit": "GB"
+        },
+        "maxItems": {
+            "title": "Max rows",
+            "type": "integer",
+            "description": "Stop after saving this many rows. Rows are sorted cheapest first, so a small number still gives you the best offers.",
+            "default": 500,
+            "minimum": 1,
+            "unit": "rows"
+        }
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "$schema": "https://apify.com/schemas/v1/actor.ide.json",
+    "actorSpecification": 1,
+    "name": "gpu-price-scraper",
+    "title": "GPU Price Scraper",
+    "description": "Compare GPU rental prices across Vast.ai and RunPod. Hourly prices, VRAM, reliability and performance-per-dollar in one dataset.",
+    "version": "0.0",
+    "meta": {
+        "templateId": "js-crawlee-cheerio",
+        "generatedBy": "Claude Code with Claude Opus 5"
+    },
+    "inputSchema": "./input_schema.json",
+    "outputSchema": "./output_schema.json",
+    "storages": {
+        "dataset": "./dataset_schema.json"
+    },
+    "dockerfile": "../Dockerfile"
+}

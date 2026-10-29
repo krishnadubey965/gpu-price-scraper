@@ -1,0 +1,6 @@
+{
+    "sources": ["vast.ai", "runpod"],
+    "gpuModels": ["RTX 4090", "H100 SXM"],
+    "onlyCheapestPerModel": false,
+    "maxItems": 60
+}

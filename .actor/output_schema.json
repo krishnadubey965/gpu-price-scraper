@@ -1,0 +1,19 @@
+{
+    "$schema": "https://apify.com/schemas/v1/output.ide.json",
+    "actorOutputSchemaVersion": 1,
+    "title": "GPU Price Scraper output",
+    "properties": {
+        "results": {
+            "type": "string",
+            "title": "All offers",
+            "description": "Every collected GPU offer, cheapest first.",
+            "template": "{{links.apiDefaultDatasetUrl}}/items"
+        },
+        "csv": {
+            "type": "string",
+            "title": "Download as CSV",
+            "description": "The same rows as a spreadsheet.",
+            "template": "{{links.apiDefaultDatasetUrl}}/items?format=csv"
+        }
+    }
+}
