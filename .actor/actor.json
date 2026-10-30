@@ -3,7 +3,7 @@
     "actorSpecification": 1,
     "name": "gpu-price-scraper",
     "title": "GPU Price Scraper - Vast.ai & RunPod Cloud GPU Rentals",
-    "description": "Scrape live cloud GPU rental prices from Vast.ai and RunPod: hourly cost per GPU, VRAM, reliability and performance per dollar. Covers H100, A100, RTX 4090, L40S and 45+ more GPU models, on-demand and interruptible. No API key or proxy needed.",
+    "description": "GPU Price Scraper collects live cloud GPU rental prices from Vast.ai and RunPod: hourly cost per GPU, VRAM, reliability and performance per dollar. Covers H100, A100, RTX 4090, L40S and 45+ more GPU models, on-demand and interruptible. No API key or proxy needed.",
     "version": "0.0",
     "meta": {
         "templateId": "js-crawlee-cheerio",
