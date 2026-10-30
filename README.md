@@ -1,6 +1,6 @@
-# GPU Price Scraper
+# GPU Price Scraper - Vast.ai & RunPod Cloud GPU Rentals
 
-Track what an hour of GPU compute actually costs. This Actor pulls live rental prices from **Vast.ai** and **RunPod** and returns them as one normalised table, so you can compare the same GPU across providers, regions and price types.
+Track what an hour of cloud GPU compute actually costs. This Actor pulls live rental prices for **H100, A100, RTX 4090, L40S** and 45+ more GPU models from **Vast.ai** and **RunPod**, and returns them as one normalised table, so you can compare the same GPU across providers, regions and price types — on-demand or interruptible.
 
 No login, no API key, no proxy — both providers publish this data openly.
 

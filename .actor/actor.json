@@ -2,8 +2,8 @@
     "$schema": "https://apify.com/schemas/v1/actor.ide.json",
     "actorSpecification": 1,
     "name": "gpu-price-scraper",
-    "title": "GPU Price Scraper",
-    "description": "Compare GPU rental prices across Vast.ai and RunPod. Hourly prices, VRAM, reliability and performance-per-dollar in one dataset.",
+    "title": "GPU Price Scraper - Vast.ai & RunPod Cloud GPU Rentals",
+    "description": "Scrape live cloud GPU rental prices from Vast.ai and RunPod: hourly cost per GPU, VRAM, reliability and performance per dollar. Covers H100, A100, RTX 4090, L40S and 45+ more GPU models, on-demand and interruptible. No API key or proxy needed.",
     "version": "0.0",
     "meta": {
         "templateId": "js-crawlee-cheerio",
