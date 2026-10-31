@@ -121,7 +121,22 @@ const runpodRow = (gpu, priceType, price) => ({
     scrapedAt: new Date().toISOString(),
 });
 
+const normaliseModel = (value) => String(value ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
+
+const requestedModels = gpuModels.map((m) => normaliseModel(m)).filter(Boolean);
+
+/**
+ * Providers spell the same card differently and attach the board variant to
+ * it — Vast.ai lists "H100 SXM" and "H100 NVL" where RunPod lists "H100 SXM"
+ * and "H100 NVL" too, and a request for "H100" means every one of them.
+ * Matching on substrings keeps a single input working across both providers.
+ */
+const matchesRequestedModel = (row) =>
+    requestedModels.length === 0 ||
+    requestedModels.some((wanted) => normaliseModel(row.gpuModel).includes(wanted));
+
 const passesFilters = (row) =>
+    matchesRequestedModel(row) &&
     (maxPricePerHourUsd === null || (row.pricePerHourUsd ?? Infinity) <= maxPricePerHourUsd) &&
     (minVramGb === null || (row.vramGbPerGpu ?? 0) >= minVramGb);
 
@@ -133,26 +148,52 @@ const collect = (row) => {
 };
 
 // ---------------------------------------------------------------- Vast.ai
-async function scrapeVast() {
-    let models = gpuModels.map((m) => String(m).trim()).filter(Boolean);
+const VAST_DISCOVERY_ORDERS = [
+    [['dph_total', 'asc']],
+    [['dph_total', 'desc']],
+    [['num_gpus', 'desc']],
+    [['dlperf_per_dphtotal', 'desc']],
+    [['gpu_ram', 'desc']],
+];
 
-    if (models.length === 0) {
-        // No models requested: sample the marketplace from several angles, since
-        // any single query only ever returns 64 rows.
-        const discovered = new Set();
-        for (const order of [
-            [['dph_total', 'asc']],
-            [['dph_total', 'desc']],
-            [['num_gpus', 'desc']],
-            [['dlperf_per_dphtotal', 'desc']],
-        ]) {
-            const data = await fetchJson(vastUrl({ order, limit: VAST_PAGE_CAP }));
-            for (const offer of data?.offers ?? []) {
-                if (offer.gpu_name) discovered.add(offer.gpu_name);
-            }
+/**
+ * Vast.ai has no endpoint that lists its GPU names, and any single query
+ * returns at most 64 rows, so the catalogue is sampled from several angles.
+ * Sorting by GPU memory is what surfaces the big cards (H200, B200, B300).
+ */
+async function discoverVastModels() {
+    const discovered = new Set();
+    for (const order of VAST_DISCOVERY_ORDERS) {
+        const data = await fetchJson(vastUrl({ order, limit: VAST_PAGE_CAP }));
+        for (const offer of data?.offers ?? []) {
+            if (offer.gpu_name) discovered.add(offer.gpu_name);
         }
-        models = [...discovered];
-        log.info(`Vast.ai: discovered ${models.length} GPU models`);
+    }
+    return [...discovered];
+}
+
+async function scrapeVast() {
+    const requested = gpuModels.map((m) => String(m).trim()).filter(Boolean);
+    const catalogue = await discoverVastModels();
+    log.info(`Vast.ai: ${catalogue.length} GPU models in the catalogue`);
+
+    let models = catalogue;
+
+    if (requested.length > 0) {
+        // gpu_name is matched exactly and carries the board variant, so a query
+        // for "H100" comes back empty while "H100 SXM" returns offers. Each
+        // requested name is therefore widened to every catalogue name holding it.
+        const expanded = new Set();
+        for (const wanted of requested) {
+            const needle = normaliseModel(wanted);
+            const hits = catalogue.filter((name) => normaliseModel(name).includes(needle));
+            // Discovery samples the marketplace rather than listing it, so a
+            // name it missed is still worth querying exactly as it was typed.
+            if (hits.length === 0) expanded.add(wanted);
+            for (const name of hits) expanded.add(name);
+        }
+        models = [...expanded];
+        log.info(`Vast.ai: "${requested.join('", "')}" -> ${models.join(', ') || 'no match'}`);
     }
 
     for (const model of models) {
